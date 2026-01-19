@@ -22,6 +22,8 @@
     <modules>
         <module>fridge-common</module>
         <module>fridge-domain</module>
+        <module>fridge-cache</module>
+        <module>fridge-security</module>
         <module>fridge-vision-sdk</module>
         <module>fridge-llm-sdk</module>
         <module>fridge-web-api</module>
@@ -62,7 +64,17 @@
             </dependency>
             <dependency>
                 <groupId>com.smartfridge</groupId>
+                <artifactId>fridge-cache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.smartfridge</groupId>
                 <artifactId>fridge-llm-sdk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.smartfridge</groupId>
+                <artifactId>fridge-security</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

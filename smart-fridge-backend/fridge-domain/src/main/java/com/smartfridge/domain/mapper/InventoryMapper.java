@@ -31,4 +31,10 @@ public interface InventoryMapper extends BaseMapper<Inventory> {
      */
     @Select("SELECT * FROM inventory WHERE user_id = #{userId} AND expire_date < CURDATE()")
     List<Inventory> selectExpired(Long userId);
+
+    /**
+     * 查询系统中所有即将过期的食材 (用于定时任务)
+     */
+    @Select("SELECT * FROM inventory WHERE expire_date BETWEEN CURDATE() AND #{date} ORDER BY user_id")
+    List<Inventory> selectAllExpiringSoon(LocalDate date);
 }

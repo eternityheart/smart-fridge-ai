@@ -32,6 +32,10 @@
             <groupId>com.smartfridge</groupId>
             <artifactId>fridge-llm-sdk</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.smartfridge</groupId>
+            <artifactId>fridge-security</artifactId>
+        </dependency>
 
         <!-- Spring Boot Web -->
         <dependency>
@@ -46,9 +50,10 @@
         </dependency>
 
         <!-- Redis -->
+        <!-- Cache 模块 (包含 Redis) -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <groupId>com.smartfridge</groupId>
+            <artifactId>fridge-cache</artifactId>
         </dependency>
 
         <!-- Knife4j API 文档 -->
