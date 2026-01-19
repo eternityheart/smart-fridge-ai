@@ -1,0 +1,120 @@
+version: '3.8'
+
+# ====================================
+# 智能冰箱菜谱系统 - Docker 编排配置
+# ====================================
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: fridge-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: hsp
+      MYSQL_DATABASE: smart_fridge
+      TZ: Asia/Shanghai
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - fridge-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: fridge-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - fridge-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO 对象存储
+  minio:
+    image: minio/minio
+    container_name: fridge-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - fridge-network
+
+  # Python 视觉服务 (GPU)
+  vision-service:
+    build:
+      context: ./fridge-vision-service
+      dockerfile: Dockerfile
+    container_name: fridge-vision
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - fridge-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Spring Boot 后端
+  fridge-api:
+    build:
+      context: ./smart-fridge-backend
+      dockerfile: Dockerfile
+    container_name: fridge-api
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/smart_fridge?useSSL=false&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_PASSWORD: hsp
+      SPRING_DATA_REDIS_HOST: redis
+      VISION_SERVICE_URL: http://vision-service:5000
+    ports:
+      - "8080:8080"
+    networks:
+      - fridge-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mysql-data:
+  minio-data:
+
+networks:
+  fridge-network:
+    driver: bridge
