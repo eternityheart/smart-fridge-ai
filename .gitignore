@@ -1,0 +1,46 @@
+# Git 忽略文件
+
+# ===== IDE =====
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ===== Java =====
+target/
+*.class
+*.jar
+*.war
+*.log
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+venv/
+env/
+.venv/
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+
+# ===== 敏感信息 =====
+*.env
+*.env.local
+application-prod.yml
+
+# ===== 临时文件 =====
+*.tmp
+*.temp
+*.swp
+
+# ===== 模型文件 =====
+*.pt
+*.pth
+*.onnx
+!placeholder.pt
