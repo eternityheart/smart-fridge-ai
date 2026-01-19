@@ -21,6 +21,12 @@
             <artifactId>fridge-common</artifactId>
         </dependency>
 
+        <!-- Spring Boot Starter (提供 @Component, @Service 等注解) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
         <!-- OkHttp -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

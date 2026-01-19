@@ -4,6 +4,9 @@
 flask==3.0.0
 flask-cors==4.0.0
 
+# 环境配置管理 (抽屉式配置)
+python-dotenv==1.0.0
+
 # 图像处理
 opencv-python==4.9.0.80
 pillow==10.2.0
